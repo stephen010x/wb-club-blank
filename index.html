@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Blank White Screen</title>
+        <style>
+            html, body {
+                margin: 0;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <!--image height="400" src="https://media.discordapp.net/attachments/1276658213298638868/1276658213516738692/thumbnail_Utah_Tech_Writers_Block.png?ex=683acf5d&is=68397ddd&hm=1ba8372498930938a979b5b21ca70c09dab3b5687a9207f3da5d2ba9bf76e3df&=&format=webp&quality=lossless&width=736&height=736"></image-->
+        <canvas id="myCanvas" width="200" height="100"></canvas>
+        <script>
+            let canvas = document.getElementById('myCanvas');
+            let context = canvas.getContext('2d');
+            let width, height;
+            let dvd_logo = false;
+
+            let image = new Image();
+            image.src = "qr-code.webp"
+
+            let x, y = 0;
+            let dx, dy = 0;
+
+            
+            function resize_canvas() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                //context.fillStyle = 'white';
+                //context.fillRect(0, 0, width, height);
+            }
+
+            resize_canvas();
+
+            window.addEventListener('resize', resize_canvas);
+
+
+            document.addEventListener('keydown', function(event) {
+                //console.log(event.key);
+            })
+
+            document.addEventListener('keyup', function(event) {
+                if (event.key == " ") {
+                    dvd_logo = !dvd_logo;
+                }
+            })
+
+
+
+            function loop(timestamp) {
+                if (dvd_logo) {
+                    x += dx;
+                    y += dy;
+                } else {
+                    x, y = 0;
+                }
+            
+                context.drawImage(image, 0, 0, 400, 400);
+        	    requestAnimationFrame(loop);
+        	} 
+
+        	image.onload = function() { requestAnimationFrame(loop); };
+        	
+        </script>
+    </body>
+</html>
