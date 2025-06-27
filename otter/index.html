@@ -3,6 +3,7 @@
     <head>
         <title>Sea Otter Livestream</title>
         <style>
+            /* * { cursor: none !important; }*/
             html, body {
                 margin: 0;
                 overflow: hidden;
@@ -15,17 +16,42 @@
                 min-width: 100%;
                 min-height: 100%;
             }
-            .qr-code {
+            .qr-code1 {
     	        position: fixed;
     	        top: 0;
     	        left: 0;
     	        z-index: 9999; /* Ensures image is on top */
+    	        opacity: 0.5;
+	        }
+	        .qr-code2 {
+    	        position: fixed;
+    	        bottom: 0;
+    	        left: 0;
+    	        z-index: 9999; /* Ensures image is on top */
+    	        opacity: 0.5;
 	        }
         </style>
+
+        <script>
+            document.addEventListener('click', function() {
+    	        const elem = document.documentElement;
+    	        if (elem.requestFullscreen) {
+    	            elem.requestFullscreen();
+    	        } else if (elem.webkitRequestFullscreen) { /* Safari */
+    	            elem.webkitRequestFullscreen();
+    	        } else if (elem.msRequestFullscreen) { /* IE11 */
+    	            elem.msRequestFullscreen();
+    	        }
+    	    });
+
+    	    document.body.style.cursor = '';
+        </script>
+        
     </head>
     <body>
 
-        <img width="auto" height="40%" src="../qr-code.webp" class="qr-code">
+        <img width="auto" height="40%" src="../qr-code.webp" class="qr-code1">
+        <img width="auto" height="35%" src="../summer_form_qr.png" class="qr-code2">
 
         <iframe 
             style="max-width=100%; max-height=100%" 

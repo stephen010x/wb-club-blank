@@ -18,8 +18,11 @@
             let width, height;
             let dvd_logo = false;
 
-            let image = new Image();
-            image.src = "qr-code.webp"
+            let image1 = new Image();
+            image1.src = "qr-code.webp"
+
+            let image2 = new Image();
+            image2.src = "summer_form_qr.png"
 
             let x, y = 0;
             let dx, dy = 0;
@@ -57,11 +60,15 @@
                     x, y = 0;
                 }
             
-                context.drawImage(image, 0, 0, 400, 400);
+                context.drawImage(image1, 0, 0, 400, 400);
+                context.drawImage(image2, 0, height-400, 400, 400);
+                //context.drawImage(image2, 0, 0, 400, 400);
         	    requestAnimationFrame(loop);
         	} 
 
-        	image.onload = function() { requestAnimationFrame(loop); };
+        	//image1.onload = function() { requestAnimationFrame(loop); };
+
+        	requestAnimationFrame(loop);
         	
         </script>
     </body>
