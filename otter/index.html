@@ -8,6 +8,7 @@
                 margin: 0;
                 overflow: hidden;
                 pointer-events: none;
+                background-color: black;
             }
             iframe {
                 position: fixed;
@@ -33,6 +34,13 @@
         </style>
 
         <script>
+            const videos = [
+                'NqOmHpwMUxs',
+                'abbR-Ttd-cA',
+                '_KXHUb0wFRE',
+            ];
+
+        
             document.addEventListener('click', function() {
                 const elem = document.documentElement;
                 if (elem.requestFullscreen) {
@@ -44,7 +52,18 @@
                 }
             });
 
-            document.body.style.cursor = '';
+
+            window.addEventListener('DOMContentLoaded', () => {
+
+                document.body.style.cursor = '';
+                
+                console.log("DOING STUFF");
+
+                const video = document.getElementById('video');
+                let src = videos[Math.floor(Math.random() * videos.length)];
+                video.src = "https://www.youtube-nocookie.com/embed/" + src + 
+                        "?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0"
+            });
         </script>
         
     </head>
@@ -54,7 +73,8 @@
         <!--img width="auto" height="35%" src="../summer_form_qr.png" class="qr-code2"-->
 
         <iframe 
-            style="max-width=100%; max-height=100%" 
+            style="max-width=100%; max-height=100%"
+            id="video"
             src="https://www.youtube-nocookie.com/embed/abbR-Ttd-cA?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0" 
             frameborder="0" allow="autoplay; encrypted-media"
         allowfullscreen></iframe>
