@@ -17,34 +17,34 @@
                 min-height: 100%;
             }
             .qr-code1 {
-    	        position: fixed;
-    	        top: 0;
-    	        left: 0;
-    	        z-index: 9999; /* Ensures image is on top */
-    	        opacity: 0.5;
-	        }
-	        .qr-code2 {
-    	        position: fixed;
-    	        bottom: 0;
-    	        left: 0;
-    	        z-index: 9999; /* Ensures image is on top */
-    	        opacity: 0.5;
-	        }
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 9999; /* Ensures image is on top */
+                opacity: 0.75;
+            }
+            .qr-code2 {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                z-index: 9999; /* Ensures image is on top */
+                opacity: 0.5;
+            }
         </style>
 
         <script>
             document.addEventListener('click', function() {
-    	        const elem = document.documentElement;
-    	        if (elem.requestFullscreen) {
-    	            elem.requestFullscreen();
-    	        } else if (elem.webkitRequestFullscreen) { /* Safari */
-    	            elem.webkitRequestFullscreen();
-    	        } else if (elem.msRequestFullscreen) { /* IE11 */
-    	            elem.msRequestFullscreen();
-    	        }
-    	    });
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) { /* Safari */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE11 */
+                    elem.msRequestFullscreen();
+                }
+            });
 
-    	    document.body.style.cursor = '';
+            document.body.style.cursor = '';
         </script>
         
     </head>
