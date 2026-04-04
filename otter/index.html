@@ -34,13 +34,34 @@
         </style>
 
         <script>
-            const videos = [
+            async function loadimage_sync(url) {
+                let img = new Image();
+                img.src = url;
+                await img.decode();
+                return img;
+            }
+        
+            async function validVideoId(id) {
+                let img = await loadimage_sync("http://img.youtube.com/vi/" + id + 
+                                               "/mqdefault.jpg");
+                if (img.width == 120) return false;
+                return true;
+            }
+
+        
+            const videos_ids = [
                 'NqOmHpwMUxs',
                 'abbR-Ttd-cA',
                 '_KXHUb0wFRE',
+                'SNU0TQMsHiI',
+                'SnHke968zAA',
+                'QhxCVRJrVHs',
+                '5e4lsEe4Vew',
+                '-uooI2satIQ',
             ];
 
-        
+
+            // fullscreen on click functionality
             document.addEventListener('click', function() {
                 const elem = document.documentElement;
                 if (elem.requestFullscreen) {
@@ -56,13 +77,44 @@
             window.addEventListener('DOMContentLoaded', () => {
 
                 document.body.style.cursor = '';
-                
-                console.log("DOING STUFF");
 
-                const video = document.getElementById('video');
-                let src = videos[Math.floor(Math.random() * videos.length)];
-                video.src = "https://www.youtube-nocookie.com/embed/" + src + 
-                        "?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0"
+                const ifvideo = document.getElementById('video');
+
+                // the wonderful world of async/await bs
+                // you enforce stupid syntax, you get stupid solutions
+                (async () => {
+                    //console.log(await validVideoId("NqOmHpwMUxs"));
+
+                    // randomly picks video ids to play
+                    // if one id is invalid, it will keep trying until
+                    // it finds a working one
+                    for (let i = 0; i < videos_ids.length; i++) {
+
+                        index = Math.floor(Math.random() * videos_ids.length)
+                        // pop item from array
+                        id = videos_ids.splice(index, 1)[0];
+
+                        // if video valid
+                        if (await validVideoId(id)) {
+
+                            console.log("playing video id \""+ id +"\"")
+
+                            ifvideo.src = "https://www.youtube-nocookie.com/embed/" + 
+                                id + 
+                                "?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0";
+
+                            break;
+                            
+                        } else {
+
+                            console.log("WARNING: Stream id \""+ id +"\" is broken");
+                        
+                        }
+        
+                    }
+                    
+                })()
+                
             });
         </script>
         
