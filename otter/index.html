@@ -33,104 +33,168 @@
             }
         </style>
 
-        <script>
-            async function loadimage_sync(url) {
-                let img = new Image();
-                img.src = url;
-                await img.decode();
-                return img;
-            }
-        
-            async function validVideoId(id) {
-                let img = await loadimage_sync("http://img.youtube.com/vi/" + id + 
-                                               "/mqdefault.jpg");
-                if (img.width == 120) return false;
-                return true;
-            }
+<!--         <script> -->
+<!--             async function loadimage_sync(url) { -->
+<!--                 let img = new Image(); -->
+<!--                 img.src = url; -->
+<!--                 await img.decode(); -->
+<!--                 return img; -->
+<!--             } -->
+<!--          -->
+<!--             async function validVideoId(id) { -->
+<!--                 let img = await loadimage_sync("http://img.youtube.com/vi/" + id +  -->
+<!--                                                "/mqdefault.jpg"); -->
+<!--                 if (img.width == 120) return false; -->
+<!--                 return true; -->
+<!--             } -->
+<!--  -->
+<!--          -->
+<!--             const videos_ids = [ -->
+<!--                 'NqOmHpwMUxs', -->
+<!--                 'abbR-Ttd-cA', -->
+<!--                 '_KXHUb0wFRE', -->
+<!--                 //'SNU0TQMsHiI', -->
+<!--                 'SnHke968zAA', -->
+<!--                 //'QhxCVRJrVHs', -->
+<!--                 '5e4lsEe4Vew', -->
+<!--                 '-uooI2satIQ', -->
+<!--                 'W8azQI76EQc', -->
+<!--                 '5e4lsEe4Vew', -->
+<!--                 'DHUnz4dyb54', -->
+<!--             ]; -->
+<!--  -->
+<!--  -->
+<!--             // fullscreen on click functionality -->
+<!--             document.addEventListener('click', function() { -->
+<!--                 const elem = document.documentElement; -->
+<!--                 if (elem.requestFullscreen) { -->
+<!--                     elem.requestFullscreen(); -->
+<!--                 } else if (elem.webkitRequestFullscreen) { /* Safari */ -->
+<!--                     elem.webkitRequestFullscreen(); -->
+<!--                 } else if (elem.msRequestFullscreen) { /* IE11 */ -->
+<!--                     elem.msRequestFullscreen(); -->
+<!--                 } -->
+<!--             }); -->
+<!--  -->
+<!--  -->
+<!--             window.addEventListener('DOMContentLoaded', () => { -->
+<!--  -->
+<!--                 document.body.style.cursor = ''; -->
+<!--  -->
+<!--                 const ifvideo = document.getElementById('video'); -->
+<!--  -->
+<!--                 // the wonderful world of async/await bs -->
+<!--                 // you enforce stupid syntax, you get stupid solutions -->
+<!--                 (async () => { -->
+<!--                     //console.log(await validVideoId("NqOmHpwMUxs")); -->
+<!--  -->
+<!--                     // randomly picks video ids to play -->
+<!--                     // if one id is invalid, it will keep trying until -->
+<!--                     // it finds a working one -->
+<!--                     for (let i = 0; i < videos_ids.length; i++) { -->
+<!--  -->
+<!--                         index = Math.floor(Math.random() * videos_ids.length) -->
+<!--                         // pop item from array -->
+<!--                         id = videos_ids.splice(index, 1)[0]; -->
+<!--  -->
+<!--                         // if video valid -->
+<!--                         if (await validVideoId(id)) { -->
+<!--  -->
+<!--                             console.log("playing video id \""+ id +"\"") -->
+<!--  -->
+<!--                             ifvideo.src = "https://www.youtube-nocookie.com/embed/" +  -->
+<!--                                 id +  -->
+<!--                                 "?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0"; -->
+<!--  -->
+<!--                             break; -->
+<!--                              -->
+<!--                         } else { -->
+<!--  -->
+<!--                             console.log("WARNING: Stream id \""+ id +"\" is broken"); -->
+<!--                          -->
+<!--                         } -->
+<!--          -->
+<!--                     } -->
+<!--                      -->
+<!--                 })() -->
+<!--                  -->
+<!--             }); -->
+<!--         </script> -->
 
-        
-            const videos_ids = [
-                'NqOmHpwMUxs',
-                'abbR-Ttd-cA',
-                '_KXHUb0wFRE',
-                //'SNU0TQMsHiI',
-                'SnHke968zAA',
-                //'QhxCVRJrVHs',
-                '5e4lsEe4Vew',
-                '-uooI2satIQ',
-                'W8azQI76EQc',
-                '5e4lsEe4Vew',
-                'DHUnz4dyb54',
-                
-                //'QhxCVRJrVHs',
-                //'QhxCVRJrVHs',
-                //'QhxCVRJrVHs',
-                //'QhxCVRJrVHs',
-                //'QhxCVRJrVHs',
-                //'QhxCVRJrVHs',
-                //'QhxCVRJrVHs',
-                //'QhxCVRJrVHs',
-                //'QhxCVRJrVHs',
-                //'QhxCVRJrVHs',
-            ];
 
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+    const VIDEO_IDS = [
+        'NqOmHpwMUxs',
+        'abbR-Ttd-cA',
+        '_KXHUb0wFRE',
+        'SnHke968zAA',
+        '5e4lsEe4Vew',
+        '-uooI2satIQ',
+        'W8azQI76EQc',
+        'DHUnz4dyb54',
+    ];
+    const START_TIMEOUT_MS = 15000;
+    const ERRORS = {
+        2: 'invalid id',
+        5: 'HTML5 player error',
+        100: 'not found / private',
+        101: 'embedding disabled',
+        150: 'embedding disabled',
+    };
 
-            // fullscreen on click functionality
-            document.addEventListener('click', function() {
-                const elem = document.documentElement;
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
-                } else if (elem.webkitRequestFullscreen) { /* Safari */
-                    elem.webkitRequestFullscreen();
-                } else if (elem.msRequestFullscreen) { /* IE11 */
-                    elem.msRequestFullscreen();
-                }
-            });
+    let queue = [], player, timer, current;
 
+    function shuffle(a) {
+        a = a.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
 
-            window.addEventListener('DOMContentLoaded', () => {
+    function playNext() {
+        clearTimeout(timer);
+        if (queue.length === 0) queue = shuffle(VIDEO_IDS);
+        const id = current = queue.pop();
+        console.log('testing   ' + id);
+        player.loadVideoById(id);
+        timer = setTimeout(() => {
+            console.log('FAIL      ' + id + ' (no playback after ' + START_TIMEOUT_MS / 1000 + 's)');
+            playNext();
+        }, START_TIMEOUT_MS);
+    }
 
-                document.body.style.cursor = '';
-
-                const ifvideo = document.getElementById('video');
-
-                // the wonderful world of async/await bs
-                // you enforce stupid syntax, you get stupid solutions
-                (async () => {
-                    //console.log(await validVideoId("NqOmHpwMUxs"));
-
-                    // randomly picks video ids to play
-                    // if one id is invalid, it will keep trying until
-                    // it finds a working one
-                    for (let i = 0; i < videos_ids.length; i++) {
-
-                        index = Math.floor(Math.random() * videos_ids.length)
-                        // pop item from array
-                        id = videos_ids.splice(index, 1)[0];
-
-                        // if video valid
-                        if (await validVideoId(id)) {
-
-                            console.log("playing video id \""+ id +"\"")
-
-                            ifvideo.src = "https://www.youtube-nocookie.com/embed/" + 
-                                id + 
-                                "?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0";
-
-                            break;
-                            
-                        } else {
-
-                            console.log("WARNING: Stream id \""+ id +"\" is broken");
-                        
-                        }
-        
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('video', {
+            host: 'https://www.youtube-nocookie.com',
+            width: '100%',
+            height: '100%',
+            playerVars: { autoplay: 1, mute: 1, controls: 0, modestbranding: 1, rel: 0 },
+            events: {
+                onReady: () => { player.mute(); playNext(); },
+                onStateChange: (e) => {
+                    if (e.data === YT.PlayerState.PLAYING) {
+                        if (timer) console.log('OK        ' + current);
+                        clearTimeout(timer);
+                        timer = null;
                     }
-                    
-                })()
-                
-            });
-        </script>
+                    if (e.data === YT.PlayerState.ENDED) playNext();
+                },
+                onError: (e) => {
+                    console.log('FAIL      ' + current + ' (' + (ERRORS[e.data] || 'error ' + e.data) + ')');
+                    setTimeout(playNext, 500);
+                },
+            },
+        });
+    }
+
+    document.addEventListener('click', () => {
+        const el = document.documentElement;
+        (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen).call(el);
+    });
+</script>
         
     </head>
     <body>
@@ -138,12 +202,14 @@
         <img width="auto" height="40%" src="../qr-code.png" class="qr-code1">
         <!--img width="auto" height="35%" src="../summer_form_qr.png" class="qr-code2"-->
 
-        <iframe 
-            style="max-width=100%; max-height=100%"
-            id="video"
-            src="https://www.youtube-nocookie.com/embed/_KXHUb0wFRE?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0" 
-            frameborder="0" allow="autoplay; encrypted-media"
-        allowfullscreen></iframe>
+        <!-- <iframe  -->
+        <!--     style="max-width=100%; max-height=100%" -->
+        <!--     id="video" -->
+        <!--     src="https://www.youtube-nocookie.com/embed/_KXHUb0wFRE?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0"  -->
+        <!--     frameborder="0" allow="autoplay; encrypted-media" -->
+        <!-- allowfullscreen></iframe> -->
+
+        <div id="video"></div>
 
     </body>
 </html>
